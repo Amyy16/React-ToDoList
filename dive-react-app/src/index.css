@@ -1,0 +1,77 @@
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.list-item {
+  padding: 20px;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.list-item.active {
+  background-color: red;
+} */
+
+
+.container {
+  width: 350px;
+  margin: 50px auto;
+  padding: 20px;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* Input field */
+input {
+  width: 70%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+}
+
+/* Add button */
+button {
+  background-color: navy;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: darkblue;
+}
+
+/* Task List */
+ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 15px;
+  text-align: left;
+}
+
+/* Individual Task */
+li {
+  display: flex;
+  align-items: center;
+  background: #f4f4f4;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* Checkbox Styling */
+input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+/* Task Text */
+.task-text {
+  flex: 1;
+}
