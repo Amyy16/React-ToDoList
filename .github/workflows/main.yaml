@@ -3,7 +3,7 @@ name: Build a Nodejs App and push to Docker hub
 on:
   push:
     branches:
-      -main
+      - main
   workflow_dispatch:
   
 jobs:
