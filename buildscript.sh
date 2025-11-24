@@ -1,10 +1,17 @@
 #!/bin/bash
-echo " logging in into Docker"
+
+echo "Logging into Docker Hub..."
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-docker build -t $DOCKER_USERNAME/ci_backend_full_pipeline:v1 ../backend
+# Build backend image
+docker build -t $DOCKER_USERNAME/ci_backend_full_pipeline:v1 \
+  -f backend/Dockerfile backend
 
-docker build -t $DOCKER_USERNAME/ci_frontend_full_pipeline:v1 ../dive-react-app
+# Build frontend image
+docker build -t $DOCKER_USERNAME/ci_frontend_full_pipeline:v1 \
+  -f dive-react-app/Dockerfile dive-react-app
 
+# Push images
 docker push $DOCKER_USERNAME/ci_backend_full_pipeline:v1
 docker push $DOCKER_USERNAME/ci_frontend_full_pipeline:v1
+

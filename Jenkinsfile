@@ -1,66 +1,35 @@
 pipeline {
     agent any
-
-    tools {
-        nodejs "NodeJs"
+    environment{
+        DOCKER_USERNAME=credentials('DOCKER_USERNAME')
+        DOCKER_PASSWORD=credentials("DOCKER_PASSWORD")
+        EC2_HOST=credentials("EC2_HOST")
+        EC2_KEY=credentials("EC2_KEY")
     }
-
-    stages {
-
-        stage('Checkout') {
-            steps {
-                git branch: 'peter-branch',
-                    url: 'https://github.com/bigcephas1/React-ToDoList.git'
+    stages{
+        stage("checkout code"){
+            steps{
+                git branch: 'peter-branch', url: 'https://github.com/bigcephas1/React-ToDoList.git'
             }
         }
-
-        stage('Frontend Build') {
-            steps {
-                dir('dive-react-app') {
-                    echo "Installing frontend dependencies"
-                    sh 'npm install'
-
-                    echo "Running lint"
-                    sh 'npm run lint'
-
-                    echo "Building frontend"
-                    sh 'npm run build'
-                }
+        stage('Build image and push'){
+            steps{
+                sh 'chmod 777 buildscript.sh'
+                sh 'docker build -t $DOCKER_USERNAME/ci_backend_full_pipeline:v1 backend/Dockerfile'
+                sh "docker build -t $DOCKER_USERNAME/ci_frontend_full_pipeline:v1 dive-react-app/Dockerfile"
+                sh 'docker push $DOCKER_USERNAME/ci_backend_full_pipeline:v1'
+                sh 'docker push $DOCKER_USERNAME/ci_frontend_full_pipeline:v1'
             }
         }
-
-        stage('Backend Install') {
-            steps {
-                dir('backend') {
-                    echo "Installing backend dependencies"
-                    sh 'npm install'
-
-                    echo "Running backend tests (instead of starting server)"
-                    sh 'npm test || true'   // prevents failure if no tests exist
-                }
-            }
-        }
-
-    }
-
-    post {
-        always {
-            cleanWs()
-        }
-        success {
-            emailext(
-                subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: "The build ${env.BUILD_URL} completed successfully.",
-                to: "ukpabipeteru@gmail.com"
-            )
-        }
-        failure {
-            emailext(
-                subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: "The build ${env.BUILD_URL} failed. Please check the logs.",
-                to: "ukpabipeteru@gmail.com"
-            )
-        }
+        // stage("Deploy to ec2"){
+        //     steps{
+        //         writeFile file: 'deployment_key.pem', text: 'EC2_KEY'
+        //         sh 'chmod 600 deployment_key.pem'
+        //         sh """
+        //         ssh -o StrictHostKeyChecking=no -i 
+        //         deployment_key.pem ubuntu@${EC2_HOST}'
+        //         """
+        //     }
+        // }
     }
 }
-
