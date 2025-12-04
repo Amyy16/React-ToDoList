@@ -26,6 +26,16 @@ pipeline {
             }
         }
 
+        stage("Implement Terraform") {
+            steps {
+                dir("terraform/modules") {
+                    sh 'terraform init'
+                    sh 'terraform apply --auto-approve'
+                }
+                    
+            }
+        }
+
         stage("Deploy to EC2") {
             steps {
                 withCredentials([
