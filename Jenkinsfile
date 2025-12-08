@@ -37,11 +37,13 @@ pipeline {
                         dir("terraform/modules") {
                             sh """
                                 echo "AWS credentials loaded into environment"
-
+                                # create the files to copy the keys to
+                                touch ec2-modules/my_key.pub ec2-modules/my_key
+                    
                                 # Copy SSH keys for EC2 provisioning
-                                sudo cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
-                                sudo cp "${PRIVKEY_FILE}" ec2-modules/my_key
-                                sudo chmod 600 ec2-modules/my_key
+                                 cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
+                                 cp "${PRIVKEY_FILE}" ec2-modules/my_key
+                                 chmod 600 ec2-modules/my_key
 
                                 terraform init
                                 terraform apply --auto-approve
