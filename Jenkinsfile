@@ -27,12 +27,13 @@ pipeline {
         }
 
         stage("Implement Terraform") {
-       withCredentials([
+       
+            
+            steps {
+                withCredentials([
         file(credentialsId: 'PUBKEY_FILE', variable: 'PUBKEY_FILE'),
         file(credentialsId: 'PRIVKEY_FILE', variable: 'PRIVKEY_FILE')
     ]) 
-            
-            steps {
                 dir("terraform/modules") {
                      sh """
                 # Copy key files into the module
