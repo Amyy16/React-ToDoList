@@ -26,6 +26,7 @@ pipeline {
         }
 
         stage("Implement Terraform") {
+            
             steps {
                 withAWS(credentials: 'AWS_CREEDS', region: 'us-east-1') {
 
@@ -44,6 +45,7 @@ pipeline {
 
                                 terraform init
                                 terraform apply --auto-approve
+                                terraform destroy --auto-approve
                             """
                         }
                     }
