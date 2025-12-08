@@ -38,7 +38,7 @@ pipeline {
                             sh """
                                 echo "AWS credentials loaded into environment"
                                 # create the files to copy the keys to
-                                touch ec2-modules/my_key.pub ec2-modules/my_key
+                                 sudo touch ec2-modules/my_key.pub ec2-modules/my_key
                     
                                 # Copy SSH keys for EC2 provisioning
                                  cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
