@@ -27,10 +27,23 @@ pipeline {
         }
 
         stage("Implement Terraform") {
+       withCredentials([
+        file(credentialsId: 'PUBKEY_FILE', variable: 'PUBKEY_FILE'),
+        file(credentialsId: 'PRIVKEY_FILE', variable: 'PRIVKEY_FILE')
+    ]) 
+            
             steps {
                 dir("terraform/modules") {
-                    sh 'terraform init'
-                    sh 'terraform apply --auto-approve'
+                     sh """
+                # Copy key files into the module
+                cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
+                cp "${PRIVKEY_FILE}" ec2-modules/my_key
+
+                chmod 600 ec2-modules/my_key
+
+                terraform init
+                terraform apply --auto-approve
+            """
                 }
                     
             }
