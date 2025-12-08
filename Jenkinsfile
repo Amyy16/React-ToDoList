@@ -27,24 +27,27 @@ pipeline {
 
         stage("Implement Terraform") {
             steps {
-                withCredentials([
-                    file(credentialsId: 'PUBKEY_FILE',  variable: 'PUBKEY_FILE'),
-                    file(credentialsId: 'PRIVKEY_FILE', variable: 'PRIVKEY_FILE')
-                ]) {
+                withAWS(credentials: 'AWS_CREEDS', region: 'us-east-1') {
 
-                    dir("terraform/modules") {
-                        sh """
-                            # Copy SSH key files into module directory
-                            cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
-                            cp "${PRIVKEY_FILE}" ec2-modules/my_key
+                    withCredentials([
+                        file(credentialsId: 'PUBKEY_FILE',  variable: 'PUBKEY_FILE'),
+                        file(credentialsId: 'PRIVKEY_FILE', variable: 'PRIVKEY_FILE')
+                    ]) {
 
-                            chmod 600 ec2-modules/my_key
+                        dir("terraform/modules") {
+                            sh """
+                                echo "AWS credentials loaded into environment"
 
-                            terraform init
-                            terraform apply --auto-approve
-                        """
+                                # Copy SSH keys for EC2 provisioning
+                                cp "${PUBKEY_FILE}" ec2-modules/my_key.pub
+                                cp "${PRIVKEY_FILE}" ec2-modules/my_key
+                                chmod 600 ec2-modules/my_key
+
+                                terraform init
+                                terraform apply --auto-approve
+                            """
+                        }
                     }
-
                 }
             }
         }
@@ -72,5 +75,6 @@ pipeline {
                 }
             }
         }
+
     }
 }
